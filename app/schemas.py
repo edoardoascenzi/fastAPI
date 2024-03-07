@@ -1,7 +1,7 @@
 from datetime import datetime
 from xmlrpc.client import ResponseError
 from click import password_option
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, field_validator, ConfigDict
 from typing import Optional
 
 from sqlalchemy import Integer
@@ -48,18 +48,20 @@ class CreatePost(PostBase):
 class UpdatePost(PostBase):
     published: bool
 
-class ResponsePost(PostBase):
+class PostOut(PostBase):
+
     published: bool
     created_at: datetime
     id: int
     user_id: int
     userOwner: ResponseUser
 
+    # model_config = ConfigDict(from_attributes = True)
     # class Config:
     #     from_attributes = True
 
-class ResponsePostLike(BaseModel):
-    Post: ResponsePost
+class ResponsePost(BaseModel):
+    Post: PostOut
     likes: int
 
 ## VOTE
@@ -68,7 +70,7 @@ class Vote(BaseModel):
     post_id: int
     direction: int # 1 put vote, 0 remove vote
 
-    @validator('direction')
+    @field_validator('direction')
     def checkDirection(cls, direction):
         if direction not in [0, 1]:
             raise ValueError('Direction must be either 0 or 1')

@@ -25,8 +25,11 @@ def vote(vote: schemas.Vote, db: Session = Depends(get_db), currentUser = Depend
     postQuery = db.query(models.Post).filter(models.Post.id == vote.post_id)
     if postQuery.first() == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post {vote.post_id} does not exist")
-    
+    if postQuery.first().user_id == currentUser.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Can not like your own posts!")
+
     voteQuery = db.query(models.Vote).filter(models.Vote.post_id == vote.post_id , models.Vote.user_id == currentUser.id)
+
     foundVote = voteQuery.first()
 
     if vote.direction == 1:
@@ -40,7 +43,7 @@ def vote(vote: schemas.Vote, db: Session = Depends(get_db), currentUser = Depend
     
     else:
         if foundVote == None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User {currentUser.id} does not like post {vote.post_id}")
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User {currentUser.id} does not like post {vote.post_id}")
         voteQuery.delete(synchronize_session=False)
         db.commit()
         return Response(status_code=status.HTTP_204_NO_CONTENT)
