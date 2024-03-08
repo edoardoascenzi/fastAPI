@@ -39,7 +39,7 @@ def vote(vote: schemas.Vote, db: Session = Depends(get_db), currentUser = Depend
         db.add(newVote)
         db.commit()
         # db.refresh(newVote)
-        return newVote
+        return newVote 
     
     else:
         if foundVote == None:
