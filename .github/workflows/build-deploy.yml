@@ -8,5 +8,11 @@ jobs:
     steps:
       - name: pulling git repository
         uses: actions/checkout@v4
-      - name: say hi to edo
-        run: echo "Hi Edo!"
+      - name: install python 3.11.3
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.3"
+      - name: update pip
+        run: python -m pip install --upgrade pip
+      - name: install all the dependeces
+        run: pip install -r requirements.txt
