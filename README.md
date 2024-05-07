@@ -1,4 +1,5 @@
 fast API course: https://www.youtube.com/watch?v=0sOvCWFmrtA&t
+
 Course main topics:
 - HTTP Requests
 - Database CRUD
